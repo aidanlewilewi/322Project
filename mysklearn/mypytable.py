@@ -204,7 +204,7 @@ class MyPyTable:
         newTable = []
 
         for rows in self.data:
-            if self.check_for_missing_values(rows, ['NA', 'N/A', '']) == False: # no missing values in the row
+            if self.check_for_missing_values(rows, ['NA', 'N/A', '', ' ', 0]) == False: # no missing values in the row
                 newTable.append(rows) # append row to the new table
         self.data = newTable
 
