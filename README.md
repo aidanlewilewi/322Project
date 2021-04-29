@@ -9,7 +9,7 @@ satisfied or neutral or dissatisfied.
 
 # Run the Project 
 To run this project, clone the repo using `git clone (your github repo url here)`  
-`cd` into your local repo you just cloned 
+`cd` into your local repo you just cloned  
 Run the eda.ipynb file to see all the exploritory data analysis  
 Run the TechnicalReport.ipynb to see our write up and findings  
 
