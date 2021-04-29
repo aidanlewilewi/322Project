@@ -14,8 +14,8 @@ Run the eda.ipynb file to see all the exploritory data analysis
 Run the TechnicalReport.ipynb to see our write up and findings  
 
 # Organization
-myskylearn folder: This folder contains all of our classifiers, evaluations, and utility files. 
-projectData folder: This folder contains all of our raw data in two different csv files. 
-TechnicalReport.ipynb: The write up containing our conclusion about our findings and classifiers. 
-eda.ipynb: Cleaning the data, grouping it, and testing our classifiers. 
-proprosal.ipynb: Our project proposal, we changed the dataset we were using after submitting this document. 
+myskylearn folder: This folder contains all of our classifiers, evaluations, and utility files.  
+projectData folder: This folder contains all of our raw data in two different csv files.  
+TechnicalReport.ipynb: The write up containing our conclusion about our findings and classifiers.  
+eda.ipynb: Cleaning the data, grouping it, and testing our classifiers.  
+proprosal.ipynb: Our project proposal, we changed the dataset we were using after submitting this document.  
