@@ -34,9 +34,24 @@ def testRandomForest():
 
 
     randomForest = MyRandomForest()
-    testSet, bestMTrees = randomForest.fit(interview_table, classes, 10, 3, 3)
+    testSet = randomForest.fit(interview_table, classes, 10, 10, 3)
 
-    print(testSet)
+    print('best', randomForest.bestM)
+
+    predictions = []
+    header = []
+
+    for tree in randomForest.bestM:
+        #predictions.append(tree.predict(xTest))
+        print(tree.predict(xTest))
+    #for i in range(len(predictions[0])):
+        #header.append(i)
+    
+    #print(predictions)
+    #classPreds = []
+    #for i in range(len(predictions[0])):
+        #classPreds.append(myutils.get_column(predictions, header, i))
+    #print(classPreds)
 
     assert True == False
     

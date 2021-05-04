@@ -362,6 +362,7 @@ class MyRandomForest:
         self.N = None
         self.M = None
         self.F = None
+        self.bestM = None
 
 
     def fit(self, X_train, y_train, N, M, F):
@@ -377,7 +378,7 @@ class MyRandomForest:
         self.M = M 
         self.F = F 
 
-        xTest, xRemainder, yTest, yRemainder = myeval.train_test_split(X_train, y_train) # split into remainder and test sets
+        xRemainder, xTest, yRemainder, yTest = myeval.train_test_split(X_train, y_train) # split into remainder and test sets
 
         remainderSet = []
         testSet = []
@@ -387,60 +388,57 @@ class MyRandomForest:
             testSet.append(xTest[i] + [yTest[i]])
         for i in range(len(xRemainder)):
             remainderSet.append(xRemainder[i] + [yRemainder[i]] + [i]) # add index at end for uniqueness
-        #print("TEST", testSet)
+
         allTrees = []
         allAccuracies = []
     
-        for i in range(N):
-            #print(remainderSet)
-
+        for j in range(N):
+            
             copySet = copy.deepcopy(remainderSet)
             validationSet = []
             bootstrapSample = []
             bootstrapSample = myutils.computeBootstrappedSample(copySet) # create a bootstrap sample training set
-            
+            #print("BOOTSTRAP", bootstrapSample)
 
             # determine the validation set
             for i in range(len(remainderSet)):
-                if remainderSet[i] not in bootstrapSample:
-                    validationSet.append(remainderSet[i])
+                if copySet[i] not in bootstrapSample:
+                    validationSet.append(copySet[i])
             
-            print("validation", validationSet)
+            #print("validation", validationSet)
             # get classes for testing
             yTest = []
             for i in range(len(validationSet)):
                 validationSet[i].pop()
                 yTest.append(validationSet[i].pop())
-            print("ytest", yTest)
+            #print("ytest", yTest)
             # get classes for training
             yTrain = []
             
-            print("BOoT", bootstrapSample)
+            #print("BOoT", bootstrapSample)
             for i in range(len(bootstrapSample)):
                 yTrain.append(bootstrapSample[i][-2])
                 bootstrapSample[i] = bootstrapSample[i][:-2]
                
                 
-            print("ytrain", yTrain)
+            #print("ytrain", yTrain)
 
             decisionTree = MyDecisionTreeClassifier()
             decisionTree.fit(bootstrapSample, yTrain, F)
             predictions = decisionTree.predict(validationSet)
 
             currAccuracy = myutils.determineAccuracy(predictions, yTest)
-            allAccuracies.append([i, currAccuracy])
+            allAccuracies.append(currAccuracy)
             allTrees.append(decisionTree)
 
-        allAccuracies.sort(key=lambda x: x[1])
-
-        bestIndices = []
-        for i in range(len(allAccuracies) - M, len(allAccuracies)):
-            bestIndices.append(allAccuracies[i][0])
-
-
+        print('here', allAccuracies)
         bestMTrees = []
-        for index in bestIndices:
-            bestMTrees.append(allTrees[index])
+        for k in range(M):
+            index = allAccuracies.index(max(allAccuracies))
+            allAccuracies.pop()
+            bestMTrees.append(allTrees.pop(index))
 
-        return testSet, bestMTrees
+        self.bestM = bestMTrees
+
+        return testSet
 
