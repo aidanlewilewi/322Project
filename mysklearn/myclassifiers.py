@@ -398,30 +398,23 @@ class MyRandomForest:
             validationSet = []
             bootstrapSample = []
             bootstrapSample = myutils.computeBootstrappedSample(copySet) # create a bootstrap sample training set
-            #print("BOOTSTRAP", bootstrapSample)
 
             # determine the validation set
             for i in range(len(remainderSet)):
                 if copySet[i] not in bootstrapSample:
                     validationSet.append(copySet[i])
             
-            #print("validation", validationSet)
-            # get classes for testing
             yTest = []
             for i in range(len(validationSet)):
                 validationSet[i].pop()
                 yTest.append(validationSet[i].pop())
-            #print("ytest", yTest)
-            # get classes for training
+
             yTrain = []
             
             #print("BOoT", bootstrapSample)
             for i in range(len(bootstrapSample)):
                 yTrain.append(bootstrapSample[i][-2])
                 bootstrapSample[i] = bootstrapSample[i][:-2]
-               
-                
-            #print("ytrain", yTrain)
 
             decisionTree = MyDecisionTreeClassifier()
             decisionTree.fit(bootstrapSample, yTrain, F)
@@ -431,7 +424,6 @@ class MyRandomForest:
             allAccuracies.append(currAccuracy)
             allTrees.append(decisionTree)
 
-        print('here', allAccuracies)
         bestMTrees = []
         for k in range(M):
             index = allAccuracies.index(max(allAccuracies))
@@ -441,4 +433,22 @@ class MyRandomForest:
         self.bestM = bestMTrees
 
         return testSet
+
+    def predict(self, xTest):
+
+        predictions = []
+        majorityVotes = []
+        header = []
+
+        for tree in self.bestM:
+            predictions.append(tree.predict(xTest))
+
+        for i in range(len(predictions[0])):
+            header.append(i)
+        
+        for index in header:
+            currPred = myutils.get_column(predictions, header, index) 
+            majorityVotes.append(max(set(currPred), key=currPred.count))
+
+        return majorityVotes
 

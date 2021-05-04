@@ -34,24 +34,16 @@ def testRandomForest():
 
 
     randomForest = MyRandomForest()
-    testSet = randomForest.fit(interview_table, classes, 10, 10, 3)
-
-    print('best', randomForest.bestM)
-
-    predictions = []
-    header = []
-
-    for tree in randomForest.bestM:
-        #predictions.append(tree.predict(xTest))
-        print(tree.predict(xTest))
-    #for i in range(len(predictions[0])):
-        #header.append(i)
+    testSet = randomForest.fit(interview_table, classes, 50, 25, 4)
     
-    #print(predictions)
-    #classPreds = []
-    #for i in range(len(predictions[0])):
-        #classPreds.append(myutils.get_column(predictions, header, i))
-    #print(classPreds)
+    yTest = []
+    for i in range(len(testSet)):
+        yTest.append(testSet[i].pop())
+
+    print(yTest)
+    predictions = randomForest.predict(testSet)
+
+    print(predictions)
 
     assert True == False
     
