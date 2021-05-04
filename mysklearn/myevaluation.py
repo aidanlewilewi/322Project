@@ -88,7 +88,7 @@ def stratified_kfold_cross_validation(X, y, n_splits=5):
     """
     # first, group by category name
     for i in range(len(X)):
-        X[i].append(i)
+        #X[i].append(i)
         X[i].append(y[i])
     groupNames, groups = myutils.kFoldGroupBy(X)
 
@@ -117,6 +117,7 @@ def stratified_kfold_cross_validation(X, y, n_splits=5):
         X_train_folds.append(test)
 
     return X_train_folds, X_test_folds # TODO: fix this
+
 
 def confusion_matrix(y_true, y_pred, labels):
     """Compute confusion matrix to evaluate the accuracy of a classification.

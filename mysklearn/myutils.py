@@ -445,7 +445,8 @@ def selectAtt(data, availableAtts):
     
     
 
-def tdidt(currInstances, availableAtts, attDomain, header):
+def tdidt(currInstances, availableAtts, attDomain, header, F):
+    availableAtts = randomAttSubset(availableAtts, F)
     splitAtt = selectAtt(currInstances, availableAtts)
     availableAtts.remove(splitAtt)
 
@@ -482,7 +483,7 @@ def tdidt(currInstances, availableAtts, attDomain, header):
         else: # all base cases are false, recurse!!
             #print('CASE 4')
             valTree = ['Value', attVal]
-            subtree = tdidt(partition, availableAtts.copy(), attDomain, header)
+            subtree = tdidt(partition, availableAtts.copy(), attDomain, header, F)
             valTree.append(subtree)
             tree.append(valTree)
     return tree
@@ -597,3 +598,26 @@ def convertBinToCategory(value, bins):
         if value >= bins[i][0] and value <= bins[i][1]:
             return i + 1
         
+def randomAttSubset(attributes, F):
+    # shuffle and pick first F
+    shuffled = attributes[:] # make a copy
+    random.shuffle(shuffled)
+    return shuffled[:F]
+
+
+def computeBootstrappedSample(table):
+    n = len(table)
+    sample = []
+    for _ in range(n):
+        randIndex = random.randrange(0, n)
+        sample.append(table[randIndex])
+    return sample 
+
+def determineAccuracy(predictions, trueVals):
+    count = 0
+
+    for i in range(len(predictions)):
+        if predictions[i] == trueVals[i]:
+            count += 1
+    
+    return count / len(predictions)

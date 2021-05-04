@@ -1,5 +1,7 @@
 import mysklearn.myutils as myutils
+import mysklearn.myevaluation as myeval
 import random
+import copy
 
 class MySimpleLinearRegressor:
     """Represents a simple linear regressor.
@@ -259,7 +261,7 @@ class MyDecisionTreeClassifier:
         self.y_train = None
         self.tree = None
 
-    def fit(self, X_train, y_train):
+    def fit(self, X_train, y_train, attSubsetSize = None):
         """Fits a decision tree classifier to X_train and y_train using the TDIDT (top down induction of decision tree) algorithm.
 
         Args:
@@ -275,6 +277,9 @@ class MyDecisionTreeClassifier:
             Store the tree in the tree attribute.
             Use attribute indexes to construct default attribute names (e.g. "att0", "att1", ...).
         """
+        if attSubsetSize is None:
+            attSubsetSize = len(X_train[1])
+
         numAtts = len(X_train[1])
         # Create a header
         header = []
@@ -290,8 +295,8 @@ class MyDecisionTreeClassifier:
         # stitch together x and y train
         train = [X_train[i] + [y_train[i]] for i in range(len(X_train))]
         availableAtts = header.copy()
-        
-        tree = myutils.tdidt(train, availableAtts, attDomain, header)
+
+        tree = myutils.tdidt(train, availableAtts, attDomain, header, attSubsetSize)
         self.tree = tree
         
     def predict(self, X_test):
@@ -347,3 +352,95 @@ class MyDecisionTreeClassifier:
             You will need to install graphviz in the Docker container as shown in class to complete this method.
         """
         pass # TODO: (BONUS) fix this
+
+
+class MyRandomForest:
+
+    def __init__(self):
+        ''' Initializer for random forest.
+        '''
+        self.N = None
+        self.M = None
+        self.F = None
+
+
+    def fit(self, X_train, y_train, N, M, F):
+        ''' Fits a random forest to the training data
+
+        Args: X_train: the data to train the random forest
+                N: number of trees to be generated
+                M: "best M" trees
+                F: Number of attributes to select from
+        '''
+
+        self.N = N 
+        self.M = M 
+        self.F = F 
+
+        xTest, xRemainder, yTest, yRemainder = myeval.train_test_split(X_train, y_train) # split into remainder and test sets
+
+        remainderSet = []
+        testSet = []
+
+        # piece together test and remainder sets
+        for i in range(len(xTest)):
+            testSet.append(xTest[i] + [yTest[i]])
+        for i in range(len(xRemainder)):
+            remainderSet.append(xRemainder[i] + [yRemainder[i]] + [i]) # add index at end for uniqueness
+        #print("TEST", testSet)
+        allTrees = []
+        allAccuracies = []
+    
+        for i in range(N):
+            #print(remainderSet)
+
+            copySet = copy.deepcopy(remainderSet)
+            validationSet = []
+            bootstrapSample = []
+            bootstrapSample = myutils.computeBootstrappedSample(copySet) # create a bootstrap sample training set
+            
+
+            # determine the validation set
+            for i in range(len(remainderSet)):
+                if remainderSet[i] not in bootstrapSample:
+                    validationSet.append(remainderSet[i])
+            
+            print("validation", validationSet)
+            # get classes for testing
+            yTest = []
+            for i in range(len(validationSet)):
+                validationSet[i].pop()
+                yTest.append(validationSet[i].pop())
+            print("ytest", yTest)
+            # get classes for training
+            yTrain = []
+            
+            print("BOoT", bootstrapSample)
+            for i in range(len(bootstrapSample)):
+                yTrain.append(bootstrapSample[i][-2])
+                bootstrapSample[i] = bootstrapSample[i][:-2]
+               
+                
+            print("ytrain", yTrain)
+
+            decisionTree = MyDecisionTreeClassifier()
+            decisionTree.fit(bootstrapSample, yTrain, F)
+            predictions = decisionTree.predict(validationSet)
+
+            currAccuracy = myutils.determineAccuracy(predictions, yTest)
+            allAccuracies.append([i, currAccuracy])
+            allTrees.append(decisionTree)
+
+        allAccuracies.sort(key=lambda x: x[1])
+
+        bestIndices = []
+        for i in range(len(allAccuracies) - M, len(allAccuracies)):
+            bestIndices.append(allAccuracies[i][0])
+
+
+        bestMTrees = []
+        for index in bestIndices:
+            bestMTrees.append(allTrees[index])
+
+        return testSet, bestMTrees
+
