@@ -1,4 +1,4 @@
-Gender,Customer Type,Age,Type of Travel,Class,Flight Distance
+Gender,Customer Type,Age,Type of Travel,Class,Flight Distance, Satisfaction
 Male,disloyal Customer,2,Business travel,Business,1,neutral or dissatisfied
 Female,Loyal Customer,2,Business travel,Business,1,neutral or dissatisfied
 Male,Loyal Customer,3,Personal Travel,Eco,2,neutral or dissatisfied
