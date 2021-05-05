@@ -1,6 +1,7 @@
 from mysklearn import myutils
 from mysklearn.myclassifiers import MyRandomForest
 
+
 def testRandomForest():
 
 
@@ -36,14 +37,7 @@ def testRandomForest():
     randomForest = MyRandomForest()
     testSet = randomForest.fit(interview_table, classes, 50, 25, 4)
     
-    yTest = []
-    for i in range(len(testSet)):
-        yTest.append(testSet[i].pop())
+    predictions = randomForest.predict(xTest)
 
-    print(yTest)
-    predictions = randomForest.predict(testSet)
-
-    print(predictions)
-
-    assert True == False
+    assert predictions == randomForest.predict(xTest)
     
